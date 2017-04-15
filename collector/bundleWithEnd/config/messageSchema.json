@@ -1,0 +1,45 @@
+{
+   "schema":{
+	  "version": "1.0",
+	  "config": {},
+	  "topDef": {
+	    "type": "record",
+	    "properties": {
+	      	"source": {
+	        	"type": "contributor",
+	        	"definition": "collector"
+	      	},
+
+	      	"testRunInfo":{
+               "type":"record",
+               "properties":{
+                  "project":{
+                     "type":"string"
+                  },
+                  "testRunID":{
+                     "type":"string"
+                  },
+                  "valoVersion":{
+                     "type":"string"
+                  }
+               }
+            },
+
+
+   			"timestamp": {
+       			"type": "datetime",
+          		"annotations": ["urn:itrs:default-timestamp"]
+        	},
+	      	"hostname": {
+	        	"type": "string"
+	      	},
+	      	"counter": {
+	        	"type": "double"
+	      	},
+	      	"text": {
+	        	"type": "string"
+	      	}
+	    }
+	  }
+   }
+}

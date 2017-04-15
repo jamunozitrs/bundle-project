@@ -1,0 +1,13 @@
+{
+   "schema":{
+      "version": "1.0",
+      "config": {},
+      "topDef": {
+         "type": "record",
+         "properties": {
+            "timeLoopMilli":{ "type":"int" },
+            "csvPath":{ "type":"string" }
+         }
+      }
+   }
+}

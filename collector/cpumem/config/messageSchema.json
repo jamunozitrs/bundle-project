@@ -1,0 +1,68 @@
+{
+   "schema":{
+	    "version": "1.0",
+	    "config": {},
+	    "topDef": {
+	      "type": "record",
+	      "properties": {
+	        "source": {
+	          "type": "contributor",
+	          "definition": "collector"
+	        },
+
+	       	"testRunInfo":{
+               "type":"record",
+               "properties":{
+                  "project":{
+                     "type":"string"
+                  },
+                  "testRunID":{
+                     "type":"string"
+                  },
+                  "valoVersion":{
+                     "type":"string"
+                  }
+               }
+          },
+
+   			  "timestamp": {
+       			"type": "datetime",
+          		"annotations": ["urn:itrs:default-timestamp"]
+        	},
+	        "counter": {
+	          "type": "long"
+	        },
+	        "hostname": {
+	          "type": "string"
+	        },
+	        "cpu_global_percent": {
+	          "type": "double"
+	        },
+	        "mem_global_percent": {
+	          "type": "double"
+	        },
+	        "mem_total_physical": {
+	          "type": "double"
+	        },
+	        "mem_free_physical": {
+	          "type": "double"
+	        },
+	        "mem_total_paging": {
+	          "type": "double"
+	        },
+	        "mem_free_paging": {
+	          "type": "double"
+	        },
+	        "mem_total_virtual": {
+	          "type": "double"
+	        },
+	        "mem_free_virtual": {
+	          "type": "double"
+	        },
+	        "mem_free_extended": {
+	          "type": "double"
+	        }
+	      }
+	    }
+   }
+}

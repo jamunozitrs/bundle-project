@@ -1,0 +1,70 @@
+{
+   "schema":{
+		"version": "1.0",
+		"config": {},
+		"topDef": {
+			"type": "record",
+			"properties": {
+
+				"source": {
+					"type": "contributor",
+					"definition": "collector"
+				},
+        "timestamp": {
+        	"type": "datetime",
+        	"annotations":["urn:itrs:default-timestamp"]
+        },
+
+      "testRunInfo":{
+           "type":"record",
+           "properties":{
+              "project":{
+                 "type":"string"
+              },
+              "testRunID":{
+                 "type":"string"
+              },
+              "valoVersion":{
+                 "type":"string"
+              }
+           }
+        },
+
+				"hostname": {
+					"type": "string"
+				},
+				"ap_raw": {
+					"type": "string"
+				},
+				"ap_ip": {
+					"type": "string"
+				},
+				"ap_identity": {
+					"type": "string"
+				},
+				"ap_iduser": {
+					"type": "string"
+				},
+				"ap_datetime": {
+					"type": "string"
+				},
+				"ap_http_req": {
+					"type": "string"
+				},
+				"ap_status_code": {
+					"type": "string"
+				},
+				"ap_req_byte_count": {
+					"type": "string"
+				},
+				"ap_url": {
+					"type": "string"
+				},
+				"ap_client_info": {
+					"type": "string"
+				}
+
+			}
+		}
+   }
+}

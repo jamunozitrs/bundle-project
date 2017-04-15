@@ -1,0 +1,19 @@
+{
+    "version": "1.0",
+    "config": {},
+    "topDef": {
+      "type": "record",
+      "properties": {
+
+        "source": {
+          "type": "contributor",
+          "definition": "collector"
+        },
+
+        "timestamp": {
+          "type": "datetime"
+        }
+
+      }
+    }
+  }

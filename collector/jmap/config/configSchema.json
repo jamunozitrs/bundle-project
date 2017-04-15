@@ -1,0 +1,20 @@
+{
+   "schema":{
+      "version": "1.0",
+      "config": {},
+      "topDef": {
+         "type": "record",
+         "properties": {
+            "project":{ "type":"string" },
+            "testRunID":{ "type":"string" },
+            "valoVersion":{ "type":"string" },
+
+            "cron":{ "type":"string" },
+            "javaProcessName":{ "type":"string" },
+            "jpsFile":{ "type":"string" },
+            "jmapheapFile":{ "type":"string" },
+            "jmapdumpFile":{ "type":"string" }
+         }
+      }
+   }
+}

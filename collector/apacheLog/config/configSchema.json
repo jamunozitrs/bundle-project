@@ -1,0 +1,16 @@
+{
+   "schema":{
+      "version": "1.0",
+      "config": {},
+      "topDef": {
+         "type": "record",
+         "properties": {
+            "project":{ "type":"string" },
+            "testRunID":{ "type":"string" },
+            "valoVersion":{ "type":"string" },
+            "logLevelBundle":{ "type":"int" },
+            "dirs":{ "type":"array" }
+         }
+      }
+   }
+}
