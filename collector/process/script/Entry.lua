@@ -10,7 +10,8 @@ local myResultMessage =
 			{
 				["project"] 		= nil,
 				["testRunID"] 	= nil,
-				["valoVersion"] = nil
+				["valoVersion"] = nil,
+				["collectorVersion"] = nil
 			},
 
 		["timestamp"] = nil,
@@ -31,6 +32,7 @@ function OnBeforeStart(config)
 	myResultMessage["testRunInfo"]["project"]			= config['project']
 	myResultMessage["testRunInfo"]["testRunID"]  	= config['testRunID']
 	myResultMessage["testRunInfo"]["valoVersion"] = config['valoVersion']
+	myResultMessage["testRunInfo"]["collectorVersion"] = Collector.Core.getBundleInformation()[1]["collector-version"]
 
 	isRunning = true
 	print("The process bundle is running")
@@ -40,7 +42,7 @@ end
 function OnStart()
 
 	myResultMessage["hostname"] = Collector.Network.getHostName()[1]
-
+	
 	while (isRunning)  do
 
 		result = Collector.Process.getProcessesInformation(processToMonitor)

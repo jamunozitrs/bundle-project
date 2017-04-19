@@ -22,6 +22,9 @@
                   },
                   "valoVersion":{
                      "type":"string"
+                  },
+                  "collectorVersion":{
+                     "type":"string"
                   }
                }
             },
