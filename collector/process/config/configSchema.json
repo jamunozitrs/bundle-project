@@ -10,7 +10,8 @@
             "valoVersion":{ "type":"string" },
 
             "timeLoopMilli":{ "type":"int" },
-            "process":{ "type":"string" }
+            "process":{ "type":"string" },
+            "sampleInterval":{ "type":"int" }
          }
       }
    }

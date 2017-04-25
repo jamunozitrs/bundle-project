@@ -1,7 +1,11 @@
 local isRunning
 local timeLoop
 local processToMonitor
+local sampleInterval
 local result
+
+local process_table = {}
+
 
 local myResultMessage =
 	{
@@ -28,6 +32,11 @@ function OnBeforeStart(config)
 	--Code...
 	timeLoop = config['timeLoopMilli']
 	processToMonitor = config['process']
+	sampleInterval = config['sampleInterval']
+
+	if sampleInterval == nil then
+		sampleInterval = 100
+	end	
 
 	myResultMessage["testRunInfo"]["project"]			= config['project']
 	myResultMessage["testRunInfo"]["testRunID"]  	= config['testRunID']
@@ -42,10 +51,11 @@ end
 function OnStart()
 
 	myResultMessage["hostname"] = Collector.Network.getHostName()[1]
-	
+
 	while (isRunning)  do
 
-		result = Collector.Process.getProcessesInformation(processToMonitor)
+		process_table[1] = processToMonitor
+		result = Collector.Process.getProcessesInformation(process_table, sampleInterval)
 
 		if result[0] ~= 0 then
 			print("error while calling method ('" .. result[1] .. "')")
@@ -56,8 +66,8 @@ function OnStart()
 				myResultMessage["timestamp"] = (os.time()*1000)
 				myResultMessage["pid"] = pid
 				myResultMessage["name"] = proc_info["name"]
-				myResultMessage["memory"] = proc_info["memory"]
-				myResultMessage["cpu"] = (proc_info["cpu-percentage"]*100)
+				myResultMessage["memory"] = proc_info["ram-usage"]
+				myResultMessage["cpu"] = (proc_info["cpu-percentage"])
 
 				result = Collector.Connector.send("MSG_PROCESS", myResultMessage)
 				if result[0] ~= 0 then
