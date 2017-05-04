@@ -1,4 +1,4 @@
---! @file: apachemonitor.lua
+--! @file: Entry.lua
 --! @brief Fixed file tail monitor
 --! @author David Torelli (dtorelli@itrsgroup.com)
 --! @copyright ITRS Group all rights reserved.
@@ -6,7 +6,6 @@
 ------------------------------------------------------------------------------------------------------------------------
 -- Dependencies
 ------------------------------------------------------------------------------------------------------------------------
-datacomposer = require "common/Datacomposer"
 logger       = require "common/Logger"
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -27,7 +26,7 @@ file_from_filename = {}
 --! @brief Bundle lifecycle OnStart @see API
 --! @param config configuration holding the files to be tailed grouped by directory
 function OnBeforeStart(config)
-	--logger.level = logger.kInfo
+
 	logger.level = config['logLevelBundle']
 	logger.debug(">>> OnBeforeStart <<<")
 	logger.trace("Configuring log rollover monitor")
@@ -62,33 +61,10 @@ function OnBeforeStart(config)
 				return
 			end
 
-			-- Run the monitor
-			local directory_monitoring_result = Collector.File.startMonitoringDirectory(
-				directory.monitor.result[1],
-				directory.path,
-				Collector.Constants.File.EventType.Added |
-				Collector.Constants.File.EventType.Modified )
-			if directory_monitoring_result[0] ~= 0 then
-				logger.fatal("error while calling method ('" .. directory_monitoring_result[1] .. "')")
-				return
-			end
-
 			-- Initialise the tailing monitors
 			for key_file, file in pairs(directory.files) do
 				logger.debug(file)
 				if key_file ~= nil and file ~= nil then
-					-- Start tailing on given file regex
-					logger.trace("Monitoring files matching regex: " .. file["filename"])
-					local res = Collector.File.startTailingFile(
-							directory.monitor.result[1],    -- our previously obtained monitor-resource-id.
-							directory.path .. file.filename,
-							true)
-					if ( res[0] == 0) then -- the file in which we’re interested.
-						logger.info("Start monitoring directory " .. directory.path)
-					else
-						logger.fatal("Could not start monitoring directory " .. directory.path)
-						return
-					end
 
 					-- Create the Regex for the file and content
 					logger.trace("Searching for content matching regex: " .. file["content_regex"])
@@ -118,6 +94,22 @@ function OnBeforeStart(config)
 
 					-- Add file config to map
 					file_from_filename[directory.path .. file.filename] = file
+
+					--Start tailing on given file regex
+					--logger.trace("Monitoring files matching regex: " .. file["filename"])
+					logger.info("Configure file monitoring: " .. file["filename"])
+					local res = Collector.File.startTailingFile(
+							directory.monitor.result[1],    -- our previously obtained monitor-resource-id.
+							directory.path .. file.filename,
+							true)
+					--print("***** startTailingFile with file: " .. directory.path .. file.filename .. " *****" )
+					if ( res[0] == 0) then -- the file in which we’re interested.
+						logger.info("Start monitoring directory " .. directory.path)
+					else
+						logger.fatal("Could not start monitoring directory " .. directory.path)
+						return
+					end
+
 				end
 			end
 		end
@@ -127,7 +119,7 @@ end
 --! @brief Bundle lifecycle OnStart @see API
 function OnStart()
 	logger.debug(">>> OnStart <<<")
-	logger.info("Tailing monitor started.")
+	logger.info("File monitor started.")
 
 	-- Main loop
 	while continue_running do
@@ -213,31 +205,26 @@ end
 --! @param number_of_events @see API
 --! @param events_table @see API
 function OnTailDetected(number_of_events, events_table)
+
+	local file
+	local content
 	logger.debug(">>> OnTailDetected <<<")
 	logger.debug(events_table)
-	for event_number, event_info in pairs(events_table) do
-		logger.debug(event_info)
-		filename = event_info["filename"]
-		chunk_count = event_info["chunk-count"]
-		chunk_id = event_info["chunk-id"]
-		content = event_info["tail-content"]
 
-		-- Process chunk if all inputs are ok
-		if filename and chunk_count and chunk_id and content then
-			-- Check file is being monitored
-			local file = file_from_filename[filename]
-			if file ~= nil then
-				logger.trace("Checking file ...")
-				logger.debug(file)
-				local data = datacomposer.add(event_info["tail-parent-code"], chunk_count, chunk_id, content)
-				if data ~= nil then
-					SendMatchingText(file, data)
-				end
-			else
-				logger.err("File is not being monitored")
+	for event_number, event_info in pairs(events_table) do
+
+		if (event_info["type"] == Collector.Constants.File.EventType.Tail) then
+
+			logger.debug(event_info)
+			file = file_from_filename[event_info["filename"]]
+			content = event_info["tail-content"]
+
+			if file ~= nil and content then
+				SendMatchingText(file, content)
 			end
-		else
-			logger.debug("Cannot process chunk! inputs not found (filename, tail-content, chunk_id, chunk_count")
+
 		end
+
 	end
+
 end
