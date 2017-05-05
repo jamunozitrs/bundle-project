@@ -2,6 +2,7 @@ local isRunning
 local timeLoop
 local processToMonitor
 local sampleInterval
+local hostname
 local result
 
 local process_table = {}
@@ -36,7 +37,7 @@ function OnBeforeStart(config)
 
 	if sampleInterval == nil then
 		sampleInterval = 100
-	end	
+	end
 
 	myResultMessage["testRunInfo"]["project"]			= config['project']
 	myResultMessage["testRunInfo"]["testRunID"]  	= config['testRunID']
@@ -48,41 +49,57 @@ function OnBeforeStart(config)
 
 end
 
+
 function OnStart()
 
-	myResultMessage["hostname"] = Collector.Network.getHostName()[1]
+	hostname = Collector.Network.getHostName()
 
-	while (isRunning)  do
+	if hostname[0] == 0 then
 
-		process_table[1] = processToMonitor
-		result = Collector.Process.getProcessesInformation(process_table, sampleInterval)
+		myResultMessage["hostname"] = hostname[1]
 
-		if result[0] ~= 0 then
-			print("error while calling method ('" .. result[1] .. "')")
-		else
+		while (isRunning)  do
 
-			for pid, proc_info in pairs(result[1]) do
+			process_table[1] = processToMonitor
+			result = Collector.Process.getProcessesInformation(process_table, sampleInterval)
 
-				myResultMessage["timestamp"] = (os.time()*1000)
-				myResultMessage["pid"] = pid
-				myResultMessage["name"] = proc_info["name"]
-				myResultMessage["memory"] = proc_info["ram-usage"]
-				myResultMessage["cpu"] = (proc_info["cpu-percentage"])
+			if result[0] ~= 0 then
+				print("[PROCESS][getProcessesInformation] error while calling method ('" .. result[1] .. "')")
+			else
 
-				result = Collector.Connector.send("MSG_PROCESS", myResultMessage)
-				if result[0] ~= 0 then
-					print("error while calling method ('" .. result[1] .. "')")
+				for pid, proc_info in pairs(result[1]) do
+
+					if pid > 0 then
+
+						myResultMessage["timestamp"] = (os.time()*1000)
+						myResultMessage["pid"] = pid
+						myResultMessage["name"] = proc_info["name"]
+						myResultMessage["memory"] = proc_info["ram-usage"]
+						myResultMessage["cpu"] = (proc_info["cpu-percentage"])
+
+						result = Collector.Connector.send("MSG_PROCESS", myResultMessage)
+						if result[0] ~= 0 then
+							print("[PROCESS][send] error while calling method ('" .. result[1] .. "')")
+						end
+
+					end
+
 				end
 
 			end
 
+			Collector.DateTime.sleepMilliseconds(timeLoop)
+
 		end
 
-		Collector.DateTime.sleepMilliseconds(timeLoop)
+	else
+
+		print("[PROCESS][getHostName] error while calling method ('" .. hostname[1] .. "')")
 
 	end
 
 end
+
 
 function OnBeforeStop()
 
