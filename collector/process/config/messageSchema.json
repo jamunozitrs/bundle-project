@@ -2,18 +2,40 @@
    "schema":{
       "version":"1.0",
       "config":{
-
       },
+      
       "topDef":{
          "type":"record",
          "properties":{
+
             "source":{
                "type":"contributor",
                "definition":"collector"
             },
+
+            "osInfo":{
+               "type":"record",
+               "properties":{
+
+                  "name":{
+                     "type":"string"
+                  },
+                  "description":{
+                     "type":"string"
+                  },
+                  "version":{
+                     "type":"string"
+                  },
+                  "architecture":{
+                     "type":"string"
+                  }
+               }
+            },
+
             "testRunInfo":{
                "type":"record",
                "properties":{
+
                   "project":{
                      "type":"string"
                   },
@@ -28,6 +50,7 @@
                   }
                }
             },
+
             "timestamp":{
                "type":"datetime",
                "annotations":[

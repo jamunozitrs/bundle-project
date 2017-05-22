@@ -1,15 +1,26 @@
+local logger = require "common/Logger"
+
 local isRunning
 local timeLoop
 local processToMonitor
 local sampleInterval
 local hostname
+local systemInfo
+local bundleInfo
 local result
-
-local process_table = {}
+local processTable = {}
 
 
 local myResultMessage =
 	{
+
+		osInfo =
+			{
+				["name"] 					= nil,
+				["version"] 			= nil,
+				["description"] 	= nil,
+				["architecture"] 	= nil
+			},
 
 		testRunInfo =
 			{
@@ -31,6 +42,13 @@ local myResultMessage =
 function OnBeforeStart(config)
 
 	--Code...
+
+	logger.level = config['logLevelBundle']
+
+	if (logger.level == nil or logger.level < 1 or logger.level > 6) then
+		logger.level = 4
+	end
+
 	timeLoop = config['timeLoopMilli']
 	processToMonitor = config['process']
 	sampleInterval = config['sampleInterval']
@@ -42,10 +60,29 @@ function OnBeforeStart(config)
 	myResultMessage["testRunInfo"]["project"]			= config['project']
 	myResultMessage["testRunInfo"]["testRunID"]  	= config['testRunID']
 	myResultMessage["testRunInfo"]["valoVersion"] = config['valoVersion']
-	myResultMessage["testRunInfo"]["collectorVersion"] = Collector.Core.getBundleInformation()[1]["collector-version"]
+
+
+	bundleInfo = Collector.Core.getBundleInformation()
+	if bundleInfo[0] == 0 then
+		myResultMessage["testRunInfo"]["collectorVersion"] = bundleInfo[1]["collector-version"]
+	else
+		logger.err("[PROCESS][getBundleInformation] error while calling method ('" .. bundleInfo[1] .. "')")
+	end
+
+
+	systemInfo = Collector.Core.getSystemInformation()
+	if systemInfo[0] == 0 then
+		myResultMessage["osInfo"]["name"] = systemInfo[1]["os-name"]
+		myResultMessage["osInfo"]["description"] = systemInfo[1]["os-description"]
+		myResultMessage["osInfo"]["version"] = systemInfo[1]["os-version"]
+		myResultMessage["osInfo"]["architecture"] = systemInfo[1]["architecture"]
+	else
+		logger.err("[PROCESS][getSystemInformation] error while calling method ('" .. systemInfo[1] .. "')")
+	end
+
 
 	isRunning = true
-	print("The process bundle is running")
+	logger.info("The process bundle is running on " .. systemInfo[1]["os-name"])
 
 end
 
@@ -60,11 +97,11 @@ function OnStart()
 
 		while (isRunning)  do
 
-			process_table[1] = processToMonitor
-			result = Collector.Process.getProcessesInformation(process_table, sampleInterval)
+			processTable[1] = processToMonitor
+			result = Collector.Process.getProcessesInformation(processTable, sampleInterval)
 
 			if result[0] ~= 0 then
-				print("[PROCESS][getProcessesInformation] error while calling method ('" .. result[1] .. "')")
+				logger.err("[PROCESS][getProcessesInformation] error while calling method ('" .. result[1] .. "')")
 			else
 
 				for pid, proc_info in pairs(result[1]) do
@@ -79,7 +116,7 @@ function OnStart()
 
 						result = Collector.Connector.send("MSG_PROCESS", myResultMessage)
 						if result[0] ~= 0 then
-							print("[PROCESS][send] error while calling method ('" .. result[1] .. "')")
+							logger.err("[PROCESS][send] error while calling method ('" .. result[1] .. "')")
 						end
 
 					end
@@ -93,9 +130,7 @@ function OnStart()
 		end
 
 	else
-
-		print("[PROCESS][getHostName] error while calling method ('" .. hostname[1] .. "')")
-
+		logger.err("[PROCESS][getHostName] error while calling method ('" .. hostname[1] .. "')")
 	end
 
 end

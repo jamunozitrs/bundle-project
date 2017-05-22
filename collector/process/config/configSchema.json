@@ -9,6 +9,7 @@
             "testRunID":{ "type":"string" },
             "valoVersion":{ "type":"string" },
 
+            "logLevelBundle" : { "type":"int" },
             "timeLoopMilli":{ "type":"int" },
             "process":{ "type":"string" },
             "sampleInterval":{ "type":"int" }
