@@ -82,7 +82,7 @@ function OnBeforeStart(config)
 
 
 	isRunning = true
-	logger.info("The process bundle is running on " .. systemInfo[1]["os-name"])
+	logger.info("[PROCESS][OnBeforeStart] The process bundle is running on " .. systemInfo[1]["os-name"])
 
 end
 
@@ -139,5 +139,6 @@ end
 function OnBeforeStop()
 
 	isRunning = false
+	logger.info("[PROCESS][OnBeforeStop] The process bundle is closing")
 
 end

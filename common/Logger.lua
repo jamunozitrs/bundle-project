@@ -84,7 +84,7 @@ logger.level = logger.kDebug
 -- Locals
 ------------------------------------------------------------------------------------------------------------------------
 
---! Log level to string map 
+--! Log level to string map
 local kSeverityString = {
 	[logger.kDebug] = "DEBUG",
 	[logger.kTrace] = "TRACE",
@@ -111,11 +111,11 @@ function logger.log ( sev, msg )
 	-- Discard non declared log severities
 	if(sev > logger.kDebug) then
 		return
-	end 
+	end
 	if(sev < logger.kFatal) then
 		return
 	end
-	
+
 	-- Discard severity message with lower priority than configured
 	if sev > logger.level then
 		return
@@ -127,14 +127,14 @@ function logger.log ( sev, msg )
 	end
 
 	-- Create log trace
-	local log_msg = "[" .. kSeverityString[sev] .. "]\t" 
+	local log_msg = "[" .. kSeverityString[sev] .. "]\t"
 						.. os.date("%Y/%m/%d %H:%M:%S") .. "\t" .. msg .. "\n"
-	
+	print(log_msg)
 	-- Print out a formatted message!
-	local result = Collector.Console.print(kSeverityColor[sev], log_msg)
-	if result[0] ~= 0 then
-		print("Error printing out to console ('" .. result[1] .. "')")
-	end
+	-- local result = Collector.Console.print(kSeverityColor[sev], log_msg)
+	-- if result[0] ~= 0 then
+	-- 	print("Error printing out to console ('" .. result[1] .. "')")
+	-- end
 end
 
 --! @brief Prints a debug trace
