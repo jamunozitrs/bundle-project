@@ -5,11 +5,14 @@
       "topDef": {
          "type": "record",
          "properties": {
+
             "project":{ "type":"string" },
             "testRunID":{ "type":"string" },
             "valoVersion":{ "type":"string" },
 
+            "logLevelBundle":{ "type":"int" },
             "timeLoopMilli":{ "type":"int" }
+            
          }
       }
    }

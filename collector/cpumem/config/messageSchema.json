@@ -10,6 +10,24 @@
 	          "definition": "collector"
 	        },
 
+          "osInfo":{
+               "type":"record",
+               "properties":{
+                  "name":{
+                     "type":"string"
+                  },
+                  "version":{
+                     "type":"string"
+                  },
+                  "description":{
+                     "type":"string"
+                  },
+                  "architecture":{
+                     "type":"string"
+                  }
+               }
+          },
+
 	       	"testRunInfo":{
                "type":"record",
                "properties":{
@@ -20,6 +38,9 @@
                      "type":"string"
                   },
                   "valoVersion":{
+                     "type":"string"
+                  },
+                  "collectorVersion":{
                      "type":"string"
                   }
                }
